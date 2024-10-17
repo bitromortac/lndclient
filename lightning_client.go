@@ -3260,6 +3260,10 @@ type RoutingPolicy struct {
 	// InboundFeeRatePPM is the effective inbound fee rate in micro-satoshis
 	// (parts per million).
 	InboundFeeRatePPM int32
+
+	// CustomRecords is a set of feature id-value pairs that are used to
+	// signal additional information about the edge.
+	CustomRecords map[uint64][]byte
 }
 
 // ChannelEdge holds the channel edge information and routing policies.
@@ -3304,6 +3308,7 @@ func getRoutingPolicy(policy *lnrpc.RoutingPolicy) *RoutingPolicy {
 		LastUpdate:         time.Unix(int64(policy.LastUpdate), 0),
 		InboundBaseFeeMsat: policy.InboundFeeBaseMsat,
 		InboundFeeRatePPM:  policy.InboundFeeRateMilliMsat,
+		CustomRecords:      policy.CustomRecords,
 	}
 }
 
