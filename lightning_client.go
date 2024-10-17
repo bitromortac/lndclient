@@ -3226,6 +3226,17 @@ type RoutingPolicy struct {
 
 	// LastUpdate is the last update time for the edge policy.
 	LastUpdate time.Time
+
+	// CustomRecords is a set of feature id-value pairs that are used to
+	// signal additional information about the edge.
+	CustomRecords map[uint64][]byte
+
+	// InboundFeeBaseMsat is the base fee charged for incoming HTLCs.
+	InboundFeeBaseMsat int32
+
+	// InboundFeeRateMilliMsat is the rate charged for incoming HTLCs for
+	// each millionth of a satoshi forwarded, in milli-satoshis.
+	InboundFeeRateMilliMsat int32
 }
 
 // ChannelEdge holds the channel edge information and routing policies.
@@ -3261,13 +3272,16 @@ func getRoutingPolicy(policy *lnrpc.RoutingPolicy) *RoutingPolicy {
 	}
 
 	return &RoutingPolicy{
-		TimeLockDelta:    policy.TimeLockDelta,
-		MinHtlcMsat:      policy.MinHtlc,
-		MaxHtlcMsat:      policy.MaxHtlcMsat,
-		FeeBaseMsat:      policy.FeeBaseMsat,
-		FeeRateMilliMsat: policy.FeeRateMilliMsat,
-		Disabled:         policy.Disabled,
-		LastUpdate:       time.Unix(int64(policy.LastUpdate), 0),
+		TimeLockDelta:           policy.TimeLockDelta,
+		MinHtlcMsat:             policy.MinHtlc,
+		MaxHtlcMsat:             policy.MaxHtlcMsat,
+		FeeBaseMsat:             policy.FeeBaseMsat,
+		FeeRateMilliMsat:        policy.FeeRateMilliMsat,
+		Disabled:                policy.Disabled,
+		LastUpdate:              time.Unix(int64(policy.LastUpdate), 0),
+		InboundFeeBaseMsat:      policy.InboundFeeBaseMsat,
+		InboundFeeRateMilliMsat: policy.InboundFeeRateMilliMsat,
+		CustomRecords:           policy.CustomRecords,
 	}
 }
 
