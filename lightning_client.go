@@ -609,6 +609,10 @@ const (
 	// FullyResolvedChannelUpdate indicates that the channel event holds
 	// information about a channel has been fully closed.
 	FullyResolvedChannelUpdate
+
+	// ChannelParamsUpdate indicates that the channel has updated
+	// parameters.
+	ChannelParamsUpdate
 )
 
 // OpenStatusUpdate is a wrapper for channel status updates following a channel
@@ -649,6 +653,9 @@ type ChannelEventUpdate struct {
 
 	// ClosedChannelInfo holds the channel info for a newly closed channel.
 	ClosedChannelInfo *ClosedChannel
+
+	// ChannelParamsUpdate holds updates to channel parameters.
+	ChannelParamsUpdate *ChannelInfo
 }
 
 // ClosedChannel represents a channel that has been closed.
@@ -2829,6 +2836,17 @@ func (s *lightningClient) getChannelEventUpdate(
 		result.ChannelPoint, err = getOutPoint(
 			fundingTxID.FundingTxidBytes,
 			channelPoint.OutputIndex,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+	case lnrpc.ChannelEventUpdate_CHANNEL_UPDATE:
+		result.UpdateType = ChannelParamsUpdate
+		channel := rpcChannelEventUpdate.GetUpdatedChannel()
+
+		result.ChannelParamsUpdate, err = s.newChannelInfo(
+			channel.Channel,
 		)
 		if err != nil {
 			return nil, err
